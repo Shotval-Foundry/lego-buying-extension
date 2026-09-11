@@ -1,3 +1,5 @@
+// © 2026 Shotval Foundry｜僅供本站授權使用，禁止未經同意之複製、修改或轉發用於其他服務
+
 const THIRD_PARTY_KEYWORDS = ['兼容', '國產', '第三方', 'MOC', 'moc'];
 const COLOR_ALIASES = {
   '深灰': ['深藍灰', '深灰', 'DBG', 'Dark Bluish Gray', 'dark bluish gray', 'dark gray'],
@@ -11,9 +13,40 @@ const COLOR_ALIASES = {
   '橘':   ['橘色', '橘', 'Orange', 'orange'],
   '棕':   ['褐色', '棕色', '咖啡色', 'Brown', 'brown'],
   '透明': ['透明', '透', 'Trans', 'trans', 'Clear', 'clear'],
+  'White': ['白色', '白', 'White', 'white'],
+  'Black': ['黑色', '黑', 'Black', 'black'],
+  'Light Bluish Gray': ['淺藍灰', '淺灰', 'Light Bluish Gray'],
+  'Dark Bluish Gray': ['深藍灰', '深灰', 'Dark Bluish Gray'],
+  'Red': ['紅色', '紅', 'Red', 'red'],
+  'Dark Red': ['深紅色', '深紅', 'Dark Red'],
+  'Reddish Orange': ['橘紅色', '橘紅', 'Reddish Orange'],
+  'Reddish Brown': ['紅棕色', '紅棕', 'Reddish Brown'],
+  'Dark Brown': ['深棕色', '深棕', 'Dark Brown'],
+  'Tan': ['沙色', '米色', '砂色', 'Tan'],
+  'Dark Tan': ['深砂色', '深米色', '深沙色', 'Dark Tan'],
+  'Nougat': ['深膚色', 'Nougat'],
+  'Light Nougat': ['膚色', 'Light Nougat'],
+  'Orange': ['橘色', '橘', 'Orange', 'orange'],
+  'Dark Orange': ['深橘色', '深橘', 'Dark Orange'],
+  'Bright Light Orange': ['亮橘色', '亮橘', 'Bright Light Orange'],
+  'Yellow': ['黃色', '黃', 'Yellow', 'yellow'],
+  'Bright Light Yellow': ['亮黃色', '亮黃', 'Bright Light Yellow'],
+  'Neon Yellow': ['螢光黃', 'Neon Yellow'],
+  'Green': ['綠色', '綠', 'Green', 'green'],
+  'Dark Green': ['深綠色', '深綠', 'Dark Green'],
+  'Bright Green': ['亮綠色', '亮綠', 'Bright Green'],
+  'Lime': ['萊姆綠', 'Lime'],
+  'Sand Green': ['沙綠色', '砂綠色', 'Sand Green'],
+  'Olive Green': ['橄欖綠色', '橄欖綠', 'Olive Green'],
+  'Blue': ['藍色', '藍', 'Blue', 'blue'],
+  'Dark Blue': ['深藍色', '深藍', 'Dark Blue'],
+  'Medium Blue': ['中間藍', 'Medium Blue'],
+  'Sand Blue': ['沙藍色', '砂藍', 'Sand Blue'],
+  'Dark Azure': ['深水藍色', 'Dark Azure'],
+  'Medium Azure': ['湖水藍', 'Medium Azure'],
 };
 
-const CONCURRENCY = 5; // 同時進行的零件查詢數量上限
+const CONCURRENCY = 5;
 
 function isGenuine(name) {
   const hasBrand = name.includes('LEGO') || name.includes('樂高');
@@ -38,8 +71,6 @@ function matchColor(name, targetColor) {
   return false;
 }
 
-// 批次查詢商品詳細資料。原本是逐批 for 迴圈序列等待，
-// 改成用 Promise.all 讓每一批（最多 20 筆 id）同時發送，不互相等待。
 async function fetchProdDetails(prodIds) {
   const batches = [];
   for (let i = 0; i < prodIds.length; i += 20) {
@@ -147,12 +178,6 @@ async function searchPart(partNumber, color) {
   return results;
 }
 
-/**
- * 用固定併發數的 worker pool 收集所有零件資料。
- * 每個 worker 各自跑迴圈，領到一筆處理一筆，完成立刻領下一筆，
- * 彼此不互相等待，名額隨時補滿。
- * onProgress(completed, total) 會在每完成一筆時被呼叫。
- */
 async function collectRawData(parts, onProgress) {
   const rawData = {};
   let index = 0;
@@ -205,8 +230,6 @@ async function runOptimize(parts, token, onProgress) {
   return await resp.json();
 }
 
-// 長連線通道：讓 background 能在計算過程中持續回報進度，
-// 而不只是等全部做完才一次性回覆（chrome.runtime.sendMessage 只能回應一次，做不到這件事）。
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name !== "optimize-channel") return;
 
