@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Lego Buying Foundry Helper (DEBUG)",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "【本機除錯用，勿發布】協助收集 Ruten 樂高零件報價並送出計算",
-  "permissions": [],
+  "permissions": ["storage"],
   "host_permissions": [
     "https://rtapi.ruten.com.tw/*",
     "https://lego-buying-backend.onrender.com/*"
