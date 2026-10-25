@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lego Buying Foundry Helper (DEBUG)",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "【本機除錯用，勿發布】協助收集 Ruten 樂高零件報價並送出計算",
   "permissions": ["storage"],
   "host_permissions": [

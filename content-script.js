@@ -2,7 +2,7 @@ window.addEventListener("message", (event) => {
   if (event.source !== window) return;
 
   if (event.data?.type === "LEGO_HELPER_PING") {
-    window.postMessage({ type: "LEGO_HELPER_PONG" }, "*");
+    window.postMessage({ type: "LEGO_HELPER_PONG", version: EXT_VERSION }, "*");
     return;
   }
 
