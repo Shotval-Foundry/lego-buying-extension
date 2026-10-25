@@ -1,3 +1,4 @@
+const EXT_VERSION = chrome.runtime.getManifest().version;
 window.addEventListener("message", (event) => {
   if (event.source !== window) return;
 
